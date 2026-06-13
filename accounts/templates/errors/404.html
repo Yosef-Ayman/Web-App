@@ -1,0 +1,14 @@
+{% extends 'components/layout.html' %}
+{% load static %}
+{% block title %}Page Not Found | Jobify{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'css/errors.css' %}">{% endblock %}
+{% block main %}
+<section class="error-page">
+    <div class="error-card">
+        <span>404</span>
+        <h1>This page is off the board</h1>
+        <p>The link may be outdated, moved, or no longer available.</p>
+        <a href="{% url 'index' %}">Find open roles</a>
+    </div>
+</section>
+{% endblock %}

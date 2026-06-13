@@ -1,0 +1,58 @@
+{% extends "components/layout.html" %}
+{% load static %}
+
+{% block title %}Confirm Email | Jobify{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/onboarding.css' %}">
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block main %}
+<div class="onboarding-shell">
+    <div class="onboarding-split">
+
+        <div class="onboarding-left">
+            <div class="left-brand">Jobify<span>.</span></div>
+            <div class="left-content">
+                <h2>Almost there. One last step.</h2>
+                <p>Please verify the email address linked to your social account before we get you started.</p>
+            </div>
+        </div>
+
+        <div class="onboarding-right">
+            <div class="onboarding-card">
+
+                <div class="onboarding-header">
+                    <h1>Confirm Email</h1>
+                    <p>Review and confirm the email address for your account.</p>
+                </div>
+
+                {% if form.errors %}
+                <div class="username-feedback error" style="background:#fef2f2;border:1px solid #fecaca;padding:0.65rem 0.85rem;border-radius:8px;font-size:0.82rem;margin-bottom:1rem;">
+                    <i class="fas fa-circle-exclamation"></i> {{ form.errors }}
+                </div>
+                {% endif %}
+
+                <form method="post" class="onboarding-form" novalidate>
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label class="form-label" for="email">
+                            Email Address
+                            <input type="email" placeholder="you@example.com" required id="email" name="email"
+                                   class="form-input-text" value="{{ form.email.value|default:'' }}"
+                                   autocomplete="email">
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-onboarding-continue">
+                        Confirm &amp; Continue <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

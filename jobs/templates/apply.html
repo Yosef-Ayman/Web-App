@@ -1,0 +1,107 @@
+{% extends 'components/layout.html' %}
+{% load static %}
+{% block title %}Apply – {{ job.title }} | Jobify{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/user-apply.css' %}">
+{% endblock %}
+
+{% block main %}
+<section class="apply-page">
+
+    <div class="apply-job-summary">
+        <div class="company-logo">
+            {% if job.employer.avatar_image %}
+                <img src="{{ job.employer.avatar_image.url }}" alt="{{ job.employer.company_name }}" />
+            {% else %}
+                <i class="fa-solid fa-building"></i>
+            {% endif %}
+        </div>
+        <div class="apply-job-info">
+            <h1>{{ job.title }}</h1>
+            <p class="company-name">{{ job.employer.company_name }}</p>
+            <div class="apply-job-meta">
+                <span><i class="fa-solid fa-location-dot"></i> {{ job.location }}</span>
+                <span><i class="fa-solid fa-briefcase"></i> {{ job.get_job_type_display }}</span>
+                <span><i class="fa-solid fa-tag"></i> {{ job.category.name|default:"—" }}</span>
+                {% if job.salary_min or job.salary_max %}
+                <span class="salary"><i class="fa-solid fa-dollar-sign"></i> {{ job.salary_min|default:"?" }} – {{ job.salary_max|default:"?" }} EGP</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="apply-content-grid">
+        <div class="apply-form-card">
+            <h2>Submit Application</h2>
+
+            {% if already_applied %}
+            <div class="already-applied-card">
+                <i class="fa-solid fa-circle-check" style="font-size: 3rem; color: #28a745; margin-bottom: 15px;"></i>
+                <p style="font-size: 1.2rem; font-weight: bold;">You have already applied for this job!</p>
+                <p>Your application is currently under review by the employer.</p>
+                <a href="{% url 'jobs' %}" class="btn-submit">Back to Jobs</a>
+            </div>
+            {% else %}
+            <form method="post" action="{% url 'apply_job' job.id %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-inputs">
+                    {% if request.user.cv_file %}
+                    <div class="existing-cv">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        <p>Your current CV will be submitted: <strong>{{ request.user.cv_file.name }}</strong></p>
+                        <p class="cv-hint">If you want to update it, upload a new one below:</p>
+                    </div>
+                    {% endif %}
+
+                    <div class="file-upload-wrapper">
+                        <label for="cv_file" class="btn-upload">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Choose New CV File
+                            <input type="file" id="cv_file" name="cv_file" accept=".pdf,.doc,.docx" hidden />
+                        </label>
+                        <span id="cv-filename" class="cv-filename"></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fa-solid fa-paper-plane"></i> Submit Application
+                </button>
+                <br>
+                <a href="{% url 'jobs' %}" class="btn-submit">
+                    <i class="fa-solid fa-arrow-left"></i>Back to Jobs
+                </a>
+            </form>
+            {% endif %}
+        </div>
+
+        <div class="apply-details-card">
+            <h2>Job Details</h2>
+
+            <div class="detail-section">
+                <h3>Description</h3>
+                <p>{{ job.description }}</p>
+            </div>
+
+            <div class="detail-section">
+                <h3>Required Skills</h3>
+                <div class="skills-list">
+                    {% for skill in skills_list %}
+                    <span class="skill-tag">{{ skill }}</span>
+                    {% empty %}
+                    <span class="no-skills">No specific skills listed</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}
+
+{% block script %}
+<script>
+document.getElementById('cv_file')?.addEventListener('change', function () {
+    const name = this.files[0]?.name || '';
+    document.getElementById('cv-filename').textContent = name;
+});
+</script>
+{% endblock %}

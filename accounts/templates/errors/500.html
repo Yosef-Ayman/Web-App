@@ -1,0 +1,14 @@
+{% extends 'components/layout.html' %}
+{% load static %}
+{% block title %}Server Error | Jobify{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'css/errors.css' %}">{% endblock %}
+{% block main %}
+<section class="error-page">
+    <div class="error-card">
+        <span>500</span>
+        <h1>Something broke on our side</h1>
+        <p>Please try again shortly. Your account and hiring data remain intact.</p>
+        <a href="{% url 'index' %}">Return home</a>
+    </div>
+</section>
+{% endblock %}

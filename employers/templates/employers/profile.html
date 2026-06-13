@@ -1,0 +1,179 @@
+{% extends 'employers/components/layout.html' %}
+{% load static %}
+{% block title %}Profile | Jobify - Employer{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'css/employers-profile.css' %}">{% endblock %}
+
+{% block main %}
+<form method="post" enctype="multipart/form-data" id="profileForm">
+    {% csrf_token %}
+    <input type="hidden" name="first_name" id="field_first_name" value="{{ user.first_name }}">
+    <input type="hidden" name="last_name" id="field_last_name" value="{{ user.last_name }}">
+    <input type="hidden" name="position" id="field_position" value="{{ profile.position }}">
+    <input type="hidden" name="company_name" id="field_company_name" value="{{ profile.company_name }}">
+    <input type="hidden" name="industry" id="field_industry" value="{{ profile.industry }}">
+    <input type="hidden" name="location" id="field_location" value="{{ profile.location }}">
+    <input type="hidden" name="description" id="field_description" value="">
+    <input type="hidden" name="website" id="field_website" value="{{ profile.website }}">
+
+    <div class="admin-profile-container">
+        <section class="admin-profile-background" id="bannerSection"{% if profile.banner_image %} style="background: url('{{ profile.banner_image.url }}') center/cover no-repeat;"{% endif %}>
+            <input type="file" id="bannerInput" name="banner_image" accept="image/*" hidden>
+            <label for="bannerInput" class="banner-edit-btn">✎ Edit Cover</label>
+        </section>
+
+        <section class="admin-profile-photo">
+            <input type="file" id="avatarInput" name="avatar_image" accept="image/*" hidden>
+            <div class="avatar-ring" id="avatarRing" title="Change photo">
+                <svg id="avatarPlaceholder" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"{% if profile.avatar_image %} style="display:none;"{% endif %}>
+                    <path d="M463 448.2C440.9 409.8 399.4 384 352 384L288 384C240.6 384 199.1 409.8 177 448.2C212.2 487.4 263.2 512 320 512C376.8 512 427.8 487.3 463 448.2zM64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320zM320 336C359.8 336 392 303.8 392 264C392 224.2 359.8 192 320 192C280.2 192 248 224.2 248 264C248 303.8 280.2 336 320 336z" />
+                </svg>
+                <img id="avatarPreview" src="{% if profile.avatar_image %}{{ profile.avatar_image.url }}{% endif %}" alt="Avatar"{% if not profile.avatar_image %} style="display:none;"{% endif %}>
+                <div class="avatar-overlay">Change</div>
+            </div>
+        </section>
+
+        <section class="admin-info">
+            <h2>
+                Personal Profile
+                <a href="#" class="edit-link" id="editPersonalBtn">Edit</a>
+            </h2>
+            <div class="info-grid">
+                <div class="info-field">
+                    <label>Full Name</label>
+                    <div class="info-value" data-field="name">{{ user.get_full_name|default:user.email }}</div>
+                </div>
+                <div class="info-field">
+                    <label>Email Address</label>
+                    <div class="info-value" data-field="email">{{ user.email }}</div>
+                </div>
+                <div class="info-field">
+                    <label>Position</label>
+                    <div class="info-value" data-field="position">{{ profile.position|default:"—" }}</div>
+                </div>
+                <div class="info-field">
+                    <label>Member Since</label>
+                    <div class="info-value" data-field="since">{{ profile.created_at|date:"Y" }}</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="admin-company-info">
+            <h2>
+                Company Information
+                <a href="#" class="edit-link" id="editCompanyBtn">Edit</a>
+            </h2>
+            <div class="info-grid">
+                <div class="info-field">
+                    <label>Company Name</label>
+                    <div class="info-value" data-field="company-name">{{ profile.company_name }}</div>
+                </div>
+                <div class="info-field">
+                    <label>Industry</label>
+                    <div class="info-value" data-field="industry">{{ profile.industry|default:"—" }}</div>
+                </div>
+                <div class="info-field full-width">
+                    <label>Location</label>
+                    <div class="info-value" data-field="location">{{ profile.location|default:"—" }}</div>
+                </div>
+                <div class="info-field full-width">
+                    <label>Description</label>
+                    <div class="info-value textarea" data-field="description">{{ profile.description|default:"—" }}</div>
+                </div>
+                {% if profile.website %}
+                <div class="info-field full-width">
+                    <label>Website</label>
+                    <div class="info-value" data-field="website">{{ profile.website }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="admin-actions">
+            <div class="actions-card">
+                <h2>Admin Actions</h2>
+                <a href="{% url 'employers_jobs' %}" class="action-btn">
+                    <span>View Created Jobs</span>
+                    <svg class="action-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path d="M7.293 4.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L11.586 10 7.293 5.707a1 1 0 010-1.414z" />
+                    </svg>
+                </a>
+                <a href="{% url 'employers_jobs' %}?create=1" class="action-btn">
+                    <span>Post a Job</span>
+                    <svg class="action-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path d="M7.293 4.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L11.586 10 7.293 5.707a1 1 0 010-1.414z" />
+                    </svg>
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <div class="save-bar">
+        <button type="button" class="save-btn" id="saveProfileBtn">
+            <span class="btn-spinner"></span>
+            <span class="btn-text">Save Changes</span>
+        </button>
+    </div>
+</form>
+
+<div class="toast" id="toast">
+    <svg class="toast-icon" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path id="toastIcon" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+    </svg>
+    <span id="toastMsg">Saved!</span>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" id="modal" role="dialog" aria-modal="true">
+        <div class="modal-header">
+            <h3 id="modalTitle">Edit Profile</h3>
+            <button type="button" class="modal-close" id="modalCloseBtn" aria-label="Close">✕</button>
+        </div>
+        <div class="modal-form" id="modalForm"></div>
+        <div class="modal-actions">
+            <button type="button" class="btn-cancel" id="modalCancelBtn">Cancel</button>
+            <button type="button" class="btn-save-modal" id="modalSaveBtn">Save</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/employers-profile.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('profileForm');
+    const saveBtn = document.getElementById('saveProfileBtn');
+    if (!form || !saveBtn) return;
+
+    function getDisplay(field) {
+        const el = document.querySelector('[data-field="' + field + '"]');
+        return el ? el.textContent.trim() : '';
+    }
+
+    function syncHiddenFields() {
+        const fullName = getDisplay('name');
+        const parts = fullName.split(/\s+/).filter(Boolean);
+        document.getElementById('field_first_name').value = parts[0] || '';
+        document.getElementById('field_last_name').value = parts.slice(1).join(' ');
+        document.getElementById('field_position').value = getDisplay('position');
+        document.getElementById('field_company_name').value = getDisplay('company-name');
+        document.getElementById('field_industry').value = getDisplay('industry') === '—' ? '' : getDisplay('industry');
+        document.getElementById('field_location').value = getDisplay('location') === '—' ? '' : getDisplay('location');
+        const desc = getDisplay('description');
+        document.getElementById('field_description').value = desc === '—' ? '' : desc;
+        const websiteEl = document.querySelector('[data-field="website"]');
+        if (websiteEl) {
+            document.getElementById('field_website').value = websiteEl.textContent.trim();
+        }
+    }
+
+    saveBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        syncHiddenFields();
+        saveBtn.classList.add('loading');
+        saveBtn.disabled = true;
+        form.submit();
+    });
+});
+</script>
+{% endblock %}

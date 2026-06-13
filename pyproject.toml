@@ -1,0 +1,5 @@
+[project]
+name = "web-app"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = ["django", "gunicorn", "whitenoise", "dj-database-url", "psycopg2-binary", "django-allauth", "django-environ", "pillow", "requests", "PyJWT", "cryptography", "oauthlib", "sqlparse", "asgiref", "tzdata"]

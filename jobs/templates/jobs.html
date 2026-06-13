@@ -1,0 +1,99 @@
+{% extends 'components/layout.html' %}
+{% load static %}
+{% block title %}Jobs | Jobify{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/user-jobs.css' %}">
+{% endblock %}
+
+{% block main %}
+<section class="jobs-page">
+
+    <div class="jobs-topbar">
+        <form method="get" action="{% url 'jobs' %}" class="search-filter-form">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" name="q" placeholder="Search jobs..." value="{{ query }}" />
+            </div>
+
+            <select name="job_type">
+                <option value="">All Types</option>
+                <option value="full" {% if selected_type == 'full' %}selected{% endif %}>Full Time</option>
+                <option value="part" {% if selected_type == 'part' %}selected{% endif %}>Part Time</option>
+                <option value="contract" {% if selected_type == 'contract' %}selected{% endif %}>Contract</option>
+            </select>
+
+            <select name="category">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="location">
+                <option value="">All Locations</option>
+                {% for loc in locations %}
+                <option value="{{ loc }}" {% if selected_location == loc %}selected{% endif %}>{{ loc }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="btn-search">Filter</button>
+        </form>
+    </div>
+
+    <div class="jobs-container">
+        <div class="jobs-header">
+            <h2>Available Jobs ({{ total }})</h2>
+        </div>
+
+        <div class="jobs-list">
+            {% for job in jobs %}
+            <div class="job-card">
+                <div class="job-card-header">
+                    <div class="company-logo">
+                        {% if job.employer.avatar_image %}
+                            <img src="{{ job.employer.avatar_image.url }}" alt="{{ job.employer.company_name }}" />
+                        {% else %}
+                            <i class="fa-solid fa-building"></i>
+                        {% endif %}
+                    </div>
+                    <div class="job-title-info">
+                        <h3>{{ job.title }}</h3>
+                        <p class="company-name">{{ job.employer.company_name }}</p>
+                    </div>
+                </div>
+
+                <div class="job-card-meta">
+                    <span><i class="fa-solid fa-location-dot"></i> {{ job.location }}</span>
+                    <span><i class="fa-solid fa-briefcase"></i> {{ job.get_job_type_display }}</span>
+                    <span><i class="fa-solid fa-tag"></i> {{ job.category.name|default:"—" }}</span>
+                </div>
+
+                {% if job.salary_min or job.salary_max %}
+                <div class="job-salary">
+                    <i class="fa-solid fa-dollar-sign"></i>
+                    {{ job.salary_min|default:"?" }} – {{ job.salary_max|default:"?" }} EGP
+                </div>
+                {% endif %}
+
+                <div class="job-card-footer">
+                    {% if request.user.is_authenticated %}
+                        {% if job.id in applied_job_ids %}
+                            <a href="{% url 'apply_job' job.id %}">✓ Applied</a>
+                        {% else %}
+                            <a href="{% url 'apply_job' job.id %}" class="btn-apply">Apply Now</a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn-apply">Apply Now</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="no-jobs">
+                <i class="fa-solid fa-briefcase"></i>
+                <p>No jobs found matching your criteria.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

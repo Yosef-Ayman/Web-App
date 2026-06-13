@@ -1,0 +1,14 @@
+{% extends 'components/layout.html' %}
+{% load static %}
+{% block title %}Bad Request | Jobify{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'css/errors.css' %}">{% endblock %}
+{% block main %}
+<section class="error-page">
+    <div class="error-card">
+        <span>400</span>
+        <h1>That request was not quite right</h1>
+        <p>Try refreshing the page or return to a stable place in Jobify.</p>
+        <a href="{% url 'index' %}">Back to Jobify</a>
+    </div>
+</section>
+{% endblock %}

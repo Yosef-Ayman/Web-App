@@ -1,0 +1,123 @@
+{% extends 'employers/components/layout.html' %}
+{% load static %}
+{% block title %}Employer Dashboard | Jobify{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'css/employers-home.css' %}">{% endblock %}
+
+{% block main %}
+<section class="employer-dashboard">
+    <div class="dashboard-hero">
+        <div>
+            <span class="section-label">Employer dashboard</span>
+            <h1>{{ profile.company_name }}</h1>
+            <p>{{ profile.description|default:"Manage hiring activity, profile quality, and job listings from one focused workspace." }}</p>
+        </div>
+        <div class="hero-cta">
+            <a href="{% url 'employers_jobs' %}?create=1" class="btn-primary-link">Post a Job</a>
+            <a href="{% url 'employers_profile' %}" class="btn-outline-link">Edit Company</a>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-item">
+            <h3>{{ total_jobs }}</h3>
+            <p>Jobs posted</p>
+        </div>
+        <div class="stat-item">
+            <h3>{{ total_applications }}</h3>
+            <p>Applications received</p>
+        </div>
+        <div class="stat-item">
+            <h3>{{ jobs|length }}</h3>
+            <p>Recent listings</p>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <section class="dashboard-card company-card-panel">
+            <div class="card-heading">
+                <h2>Company info</h2>
+                <a href="{% url 'employers_profile' %}">Update</a>
+            </div>
+            <div class="company-identity">
+                <div class="company-avatar">
+                    {% if profile.avatar_image %}
+                        <img src="{{ profile.avatar_image.url }}" alt="{{ profile.company_name }}">
+                    {% else %}
+                        <i class="fas fa-building"></i>
+                    {% endif %}
+                </div>
+                <div>
+                    <h3>{{ profile.company_name }}</h3>
+                    <p>{{ profile.industry }}</p>
+                </div>
+            </div>
+            <dl class="company-details">
+                <div>
+                    <dt>Location</dt>
+                    <dd>{{ profile.location }}</dd>
+                </div>
+                <div>
+                    <dt>Contact role</dt>
+                    <dd>{{ profile.position }}</dd>
+                </div>
+                {% if profile.website %}
+                    <div>
+                        <dt>Website</dt>
+                        <dd><a href="{{ profile.website }}" target="_blank" rel="noopener">{{ profile.website }}</a></dd>
+                    </div>
+                {% endif %}
+            </dl>
+        </section>
+
+        <section class="dashboard-card quick-actions">
+            <div class="card-heading">
+                <h2>Quick actions</h2>
+            </div>
+            <a href="{% url 'employers_jobs' %}?create=1">
+                <i class="fas fa-plus"></i>
+                <span>Create a job listing</span>
+            </a>
+            <a href="{% url 'employers_jobs' %}">
+                <i class="fas fa-briefcase"></i>
+                <span>Manage posted jobs</span>
+            </a>
+            <a href="{% url 'employers_profile' %}">
+                <i class="fas fa-pen-to-square"></i>
+                <span>Update company profile</span>
+            </a>
+        </section>
+    </div>
+
+    <section class="dashboard-card recent-jobs">
+        <div class="card-heading">
+            <h2>Jobs posted</h2>
+            <a href="{% url 'employers_jobs' %}">View all</a>
+        </div>
+        <div class="jobs-grid">
+            {% for job in jobs %}
+                <article class="job-card">
+                    <div class="job-card-top">
+                        <div class="job-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div>
+                            <h3>{{ job.title }}</h3>
+                            <p>{{ job.location }} &middot; {{ job.get_job_type_display }}</p>
+                        </div>
+                    </div>
+                    <a class="view-applicants-btn" href="{% url 'employers_job_applicants' job.id %}">
+                        View applicants
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </article>
+            {% empty %}
+                <div class="empty-state">
+                    <h3>No jobs posted yet</h3>
+                    <p>Create your first listing to start receiving applications.</p>
+                    <a href="{% url 'employers_jobs' %}?create=1">Post a Job</a>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+</section>
+{% endblock %}

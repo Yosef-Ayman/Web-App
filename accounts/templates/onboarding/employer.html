@@ -1,0 +1,155 @@
+{% extends 'components/layout.html' %}
+{% load static %}
+{% block title %}Employer Profile | Jobify{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/onboarding.css' %}">
+{% endblock %}
+
+{% block main %}
+<div class="onboarding-shell">
+    <div class="onboarding-split">
+        
+        <div class="onboarding-left">
+            <div class="left-brand">Jobify<span>.</span> Employers</div>
+            <div class="left-content">
+                <h2>Set up your company hub.</h2>
+                <p>Provide your company specifications to establish your identity, customize your dashboard, and start posting job listings.</p>
+            </div>
+            <div class="left-footer">&copy; {% now 'Y' %} Jobify Inc. All rights reserved.</div>
+        </div>
+
+        
+        <div class="onboarding-right" style="width: 700px; padding: 4rem 5rem;">
+            <div class="onboarding-card" style="max-width: 520px;">
+                
+                <div class="wizard-progress-wrapper">
+                    <div class="wizard-steps-text">
+                        <span>Setup Wizard</span>
+                        <span>Step 2 of 2</span>
+                    </div>
+                    <div class="wizard-progress-track">
+                        <div class="wizard-progress-fill" style="width: 100%;"></div>
+                    </div>
+                </div>
+
+                <div class="onboarding-header">
+                    <h1>Company Profile</h1>
+                    <p>Tell prospective candidates about your company details.</p>
+                </div>
+
+                <form method="post" enctype="multipart/form-data" class="onboarding-form" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="username-feedback error" style="margin-bottom: 1rem;">
+                        {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label class="form-label" for="id_company_name">
+                                Company name
+                                <input type="text" name="company_name" id="id_company_name" class="form-input-text" 
+                                       placeholder="Google" required value="{{ form.company_name.value|default:'' }}">
+                            </label>
+                            {% for error in form.company_name.errors %}
+                            <div class="username-feedback error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="id_industry">
+                                Industry
+                                <input type="text" name="industry" id="id_industry" class="form-input-text" 
+                                       placeholder="e.g. Software / Tech" required value="{{ form.industry.value|default:'' }}">
+                            </label>
+                            {% for error in form.industry.errors %}
+                            <div class="username-feedback error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label class="form-label" for="id_location">
+                                Location
+                                <input type="text" name="location" id="id_location" class="form-input-text" 
+                                       placeholder="e.g. San Francisco, CA" required value="{{ form.location.value|default:'' }}">
+                            </label>
+                            {% for error in form.location.errors %}
+                            <div class="username-feedback error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="id_position">
+                                Your position at company
+                                <input type="text" name="position" id="id_position" class="form-input-text" 
+                                       placeholder="e.g. Recruiter / HR Lead" required value="{{ form.position.value|default:'' }}">
+                            </label>
+                            {% for error in form.position.errors %}
+                            <div class="username-feedback error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="id_website">
+                            Website URL <span style="font-weight: normal; color: var(--text-muted); font-size: 0.75rem;">(Optional)</span>
+                            <input type="url" name="website" id="id_website" class="form-input-text" 
+                                   placeholder="https://example.com" value="{{ form.website.value|default:'' }}">
+                        </label>
+                        {% for error in form.website.errors %}
+                        <div class="username-feedback error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="id_description">
+                            Description
+                            <textarea name="description" id="id_description" class="form-input-text form-textarea" 
+                                      placeholder="Tell candidates what your company does and why they should join..." required>{{ form.description.value|default:'' }}</textarea>
+                        </label>
+                        {% for error in form.description.errors %}
+                        <div class="username-feedback error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label class="form-label" for="id_avatar_image">
+                                Company logo <span style="font-weight: normal; color: var(--text-muted); font-size: 0.75rem;">(Optional)</span>
+                                <input type="file" name="avatar_image" id="id_avatar_image" class="form-input-text" accept="image/*">
+                            </label>
+                            {% for error in form.avatar_image.errors %}
+                            <div class="username-feedback error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="id_banner_image">
+                                Cover banner <span style="font-weight: normal; color: var(--text-muted); font-size: 0.75rem;">(Optional)</span>
+                                <input type="file" name="banner_image" id="id_banner_image" class="form-input-text" accept="image/*">
+                            </label>
+                            {% for error in form.banner_image.errors %}
+                            <div class="username-feedback error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    
+                    <button type="submit" class="btn-onboarding-continue">
+                        Complete Onboarding <i class="fas fa-check"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

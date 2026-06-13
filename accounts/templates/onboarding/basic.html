@@ -1,0 +1,166 @@
+{% extends 'components/layout.html' %}
+{% load static %}
+{% block title %}Complete Account | Jobify{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/onboarding.css' %}">
+{% endblock %}
+
+{% block main %}
+<div class="onboarding-shell">
+    <div class="onboarding-split">
+        
+        <div class="onboarding-left">
+            <div class="left-brand">Jobify<span>.</span></div>
+            <div class="left-content">
+                <h2>Complete your profile to get started.</h2>
+                <p>Welcome! We just need a few basic details to set up your identity and guide you to the right dashboard.</p>
+            </div>
+            <div class="left-footer">&copy; {% now 'Y' %} Jobify Inc. All rights reserved.</div>
+        </div>
+
+        
+        <div class="onboarding-right">
+            <div class="onboarding-card">
+                
+                <div class="wizard-progress-wrapper">
+                    <div class="wizard-steps-text">
+                        <span>Setup Wizard</span>
+                        <span>Step 1 of 2</span>
+                    </div>
+                    <div class="wizard-progress-track">
+                        <div class="wizard-progress-fill" style="width: 50%;"></div>
+                    </div>
+                </div>
+
+                <div class="onboarding-header">
+                    <h1>About you</h1>
+                    <p>Enter your basic credentials to complete account setup.</p>
+                </div>
+
+                <form method="post" class="onboarding-form" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="username-feedback error" style="margin-bottom: 1rem;">
+                        {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label class="form-label" for="id_first_name">
+                                First name
+                                <input type="text" name="first_name" id="id_first_name" class="form-input-text" 
+                                       placeholder="Yosef" required value="{{ form.first_name.value|default:'' }}">
+                            </label>
+                            {% for error in form.first_name.errors %}
+                            <div class="username-feedback error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="id_last_name">
+                                Last name
+                                <input type="text" name="last_name" id="id_last_name" class="form-input-text" 
+                                       placeholder="Ayman" required value="{{ form.last_name.value|default:'' }}">
+                            </label>
+                            {% for error in form.last_name.errors %}
+                            <div class="username-feedback error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="id_username">
+                            Username
+                            <input type="text" name="username" id="id_username" class="form-input-text" 
+                                   placeholder="yosefayman" required value="{{ form.username.value|default:'' }}" autocomplete="off">
+                        </label>
+                        {% for error in form.username.errors %}
+                        <div class="username-feedback error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    
+                    <div class="form-group">
+                        <span class="form-label">Gender</span>
+                        <div class="gender-pills-container">
+                            <label class="gender-pill-option {% if form.gender.value == 'M' %}active{% endif %}" id="pill_m">
+                                <input type="radio" name="gender" value="M" {% if form.gender.value == 'M' %}checked{% endif %}>
+                                <i class="fas fa-mars"></i> Male
+                            </label>
+                            <label class="gender-pill-option {% if form.gender.value == 'F' %}active{% endif %}" id="pill_f">
+                                <input type="radio" name="gender" value="F" {% if form.gender.value == 'F' %}checked{% endif %}>
+                                <i class="fas fa-venus"></i> Female
+                            </label>
+                        </div>
+                        {% for error in form.gender.errors %}
+                        <div class="username-feedback error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    
+                    <div class="form-group">
+                        <span class="form-label">I want to use Jobify as a...</span>
+                        <div class="role-cards-container">
+                            
+                            <label class="role-card-option {% if form.role.value == 'seeker' %}active{% endif %}" id="card_seeker">
+                                <input type="radio" name="role" value="seeker" {% if form.role.value == 'seeker' %}checked{% endif %}>
+                                <div class="role-card-icon"><i class="fas fa-user-tie"></i></div>
+                                <div class="role-card-title">Job Seeker</div>
+                                <div class="role-card-desc">Find jobs, track applications, build profile.</div>
+                            </label>
+                            
+                            <label class="role-card-option {% if form.role.value == 'employer' %}active{% endif %}" id="card_employer">
+                                <input type="radio" name="role" value="employer" {% if form.role.value == 'employer' %}checked{% endif %}>
+                                <div class="role-card-icon"><i class="fas fa-building"></i></div>
+                                <div class="role-card-title">Employer</div>
+                                <div class="role-card-desc">Post opportunities, find talent, manage hiring.</div>
+                            </label>
+                        </div>
+                        {% for error in form.role.errors %}
+                        <div class="username-feedback error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    
+                    <button type="submit" class="btn-onboarding-continue">
+                        Continue <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        
+        const pills = document.querySelectorAll('.gender-pill-option');
+        pills.forEach(pill => {
+            const radio = pill.querySelector('input[type="radio"]');
+            pill.addEventListener('click', function () {
+                pills.forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+                radio.checked = true;
+            });
+        });
+
+        
+        const cards = document.querySelectorAll('.role-card-option');
+        cards.forEach(card => {
+            const radio = card.querySelector('input[type="radio"]');
+            card.addEventListener('click', function () {
+                cards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                radio.checked = true;
+            });
+        });
+    });</script>
+<script src="{% static 'js/username_validation.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends 'components/layout.html' %}
+{% load static %}
+{% block title %}Job Seeker Profile | Jobify{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/onboarding.css' %}">
+{% endblock %}
+
+{% block main %}
+<div class="onboarding-shell">
+    <div class="onboarding-split">
+        <div class="onboarding-left">
+            <div class="left-brand">Jobify<span>.</span></div>
+            <div class="left-content">
+                <h2>Showcase your experience.</h2>
+                <p>Add your professional coordinates so employers can match you with the right opportunities.</p>
+            </div>
+            <div class="left-footer">&copy; {% now 'Y' %} Jobify Inc. All rights reserved.</div>
+        </div>
+
+        <div class="onboarding-right">
+            <div class="onboarding-card">
+                <div class="wizard-progress-wrapper">
+                    <div class="wizard-steps-text">
+                        <span>Setup Wizard</span>
+                        <span>Step 2 of 2</span>
+                    </div>
+                    <div class="wizard-progress-track">
+                        <div class="wizard-progress-fill" style="width: 100%;"></div>
+                    </div>
+                </div>
+
+                <div class="onboarding-header">
+                    <h1>Job Seeker Profile</h1>
+                    <p>Tell us a bit about your professional focus. All these fields are optional.</p>
+                </div>
+
+                <form method="post" enctype="multipart/form-data" class="onboarding-form" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="username-feedback error" style="margin-bottom: 1rem;">
+                        {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="form-group">
+                        <label class="form-label" for="id_job_title">
+                            Expected Job Title <span style="font-weight: normal; color: var(--text-muted); font-size: 0.75rem;">(Optional)</span>
+                            <input type="text" name="job_title" id="id_job_title" class="form-input-text" 
+                                   placeholder="e.g. Senior Frontend Engineer" value="{{ form.job_title.value|default:'' }}">
+                        </label>
+                        {% for error in form.job_title.errors %}
+                        <div class="username-feedback error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="id_location">
+                            Location <span style="font-weight: normal; color: var(--text-muted); font-size: 0.75rem;">(Optional)</span>
+                            <input type="text" name="location" id="id_location" class="form-input-text" 
+                                   placeholder="e.g. London, UK / Remote" value="{{ form.location.value|default:'' }}">
+                        </label>
+                        {% for error in form.location.errors %}
+                        <div class="username-feedback error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="id_profile_photo">
+                            Profile Photo <span style="font-weight: normal; color: var(--text-muted); font-size: 0.75rem;">(Optional)</span>
+                            <input type="file" name="profile_photo" id="id_profile_photo" class="form-input-text" accept="image/*">
+                        </label>
+                        {% for error in form.profile_photo.errors %}
+                        <div class="username-feedback error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <span class="form-label">Upload CV / Resume <span style="font-weight: normal; color: var(--text-muted); font-size: 0.75rem;">(Optional)</span></span>
+                        <div class="file-upload-wrapper" id="cv_dropzone">
+                            <div class="file-upload-icon"><i class="fas fa-file-pdf"></i></div>
+                            <div class="file-upload-label" id="file-label-text">Choose file or drag here</div>
+                            <div class="file-upload-hint">PDF or Word files up to 5MB</div>
+                            <input type="file" name="cv_file" id="id_cv_file" accept=".pdf,.doc,.docx">
+                        </div>
+                        {% for error in form.cv_file.errors %}
+                        <div class="username-feedback error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <button type="submit" class="btn-onboarding-continue">
+                        Complete Onboarding <i class="fas fa-check"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropzone = document.getElementById('cv_dropzone');
+        const fileInput = document.getElementById('id_cv_file');
+        const labelText = document.getElementById('file-label-text');
+
+        if (dropzone && fileInput) {
+            dropzone.addEventListener('click', () => fileInput.click());
+            
+            fileInput.addEventListener('change', function () {
+                if (fileInput.files && fileInput.files.length > 0) {
+                    labelText.textContent = fileInput.files[0].name;
+                    labelText.style.color = 'var(--primary)';
+                }
+            });
+
+            
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.style.borderColor = 'var(--primary)';
+                dropzone.style.background = 'rgba(99, 102, 241, 0.05)';
+            });
+
+            dropzone.addEventListener('dragleave', () => {
+                dropzone.style.borderColor = 'var(--border-light)';
+                dropzone.style.background = '#fafafa';
+            });
+
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.style.borderColor = 'var(--border-light)';
+                dropzone.style.background = '#fafafa';
+                if (e.dataTransfer.files.length > 0) {
+                    fileInput.files = e.dataTransfer.files;
+                    labelText.textContent = fileInput.files[0].name;
+                    labelText.style.color = 'var(--primary)';
+                }
+            });
+        }
+    });</script>
+{% endblock %}

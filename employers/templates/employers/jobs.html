@@ -1,0 +1,212 @@
+{% extends 'employers/components/layout.html' %}
+{% load static %}
+{% block title %}Employer Dashboard - Job Management{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'css/employers-jobs.css' %}">{% endblock %}
+
+{% block main %}
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>Job Listing</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <button type="button" class="nav-btn{% if show_create_wizard %} active{% endif %}" data-section="details">Job Details</button>
+            <button type="button" class="nav-btn" data-section="requirements">Requirements</button>
+            <button type="button" class="nav-btn" data-section="company">Company Info</button>
+            <button type="button" class="nav-btn" data-section="preview">Preview</button>
+            <button type="button" class="nav-btn" data-section="publish">Publish</button>
+            <button type="button" class="nav-btn{% if not show_create_wizard %} active{% endif %}" data-section="jobs-list">My Listings</button>
+        </nav>
+    </aside>
+
+    <div class="main-content">
+        <form id="jobForm" class="job-form" method="post" action="{% url 'employers_create_job' %}" data-server-submit="true">
+            {% csrf_token %}
+
+            <section id="details" class="content-section{% if show_create_wizard %} active{% endif %}">
+                <div class="section-header">
+                    <h2>Job Details</h2>
+                    <p>Start with the basics. Tell candidates what role you're hiring for.</p>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="jobTitle">Job Title *</label>
+                        <input type="text" id="jobTitle" name="title" required placeholder="e.g., Senior Software Engineer" value="{{ form_data.title|default:'' }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Company</label>
+                        <input type="text" id="companyName" value="{{ profile.company_name }}" readonly>
+                    </div>
+                </div>
+                <div class="form-divider"></div>
+                <div class="section-header">
+                    <h3>Logistics &amp; Classification</h3>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="location">Location *</label>
+                        <input type="text" id="location" name="location" required placeholder="e.g., New York, NY or Remote" value="{{ form_data.location|default:'' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="jobType">Job Type *</label>
+                        <select id="jobType" name="job_type" required>
+                            <option value="">Select job type</option>
+                            <option value="full" {% if form_data.job_type == 'full' %}selected{% endif %}>Full-time</option>
+                            <option value="part" {% if form_data.job_type == 'part' %}selected{% endif %}>Part-time</option>
+                            <option value="contract" {% if form_data.job_type == 'contract' %}selected{% endif %}>Contract</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <input type="text" id="category" name="category" list="category-list" placeholder="e.g., Information Technology" value="{{ form_data.category|default:'' }}">
+                        <datalist id="category-list">
+                            {% for cat in categories %}<option value="{{ cat.name }}">{% endfor %}
+                        </datalist>
+                    </div>
+                    <div class="form-group">
+                        <label for="salaryMin">Salary Min</label>
+                        <input type="number" id="salaryMin" name="salary_min" placeholder="e.g., 50000" value="{{ form_data.salary_min|default:'' }}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="salaryMax">Salary Max</label>
+                        <input type="number" id="salaryMax" name="salary_max" placeholder="e.g., 100000" value="{{ form_data.salary_max|default:'' }}">
+                    </div>
+                </div>
+                <div class="section-actions">
+                    <button type="button" id="nextStepBtn" class="btn btn-primary">Next Step: Requirements →</button>
+                </div>
+            </section>
+
+            <section id="requirements" class="content-section">
+                <div class="section-header">
+                    <h2>Requirements</h2>
+                    <p>Describe what you're looking for in an ideal candidate.</p>
+                </div>
+                <div class="form-group">
+                    <label for="description">Job Description *</label>
+                    <textarea id="description" name="description" rows="8" required placeholder="Describe the role in detail...">{{ form_data.description|default:'' }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="skills">Required Skills</label>
+                    <textarea id="skills" name="skills" rows="6" placeholder="List required skills, comma-separated">{{ form_data.skills|default:'' }}</textarea>
+                </div>
+                <div class="section-actions">
+                    <button type="button" id="nextStepBtn2" class="btn btn-primary">Next Step: Review &amp; Post →</button>
+                </div>
+            </section>
+
+            <section id="company" class="content-section">
+                <div class="section-header">
+                    <h2>Company Info</h2>
+                    <p>Company details shown on your employer profile.</p>
+                </div>
+                <div class="form-group">
+                    <label for="companyWebsite">Company Website</label>
+                    <input type="url" id="companyWebsite" placeholder="https://example.com" value="{{ profile.website }}" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="companyDescription">Company Description</label>
+                    <textarea id="companyDescription" rows="6" disabled>{{ profile.description }}</textarea>
+                </div>
+                <p style="font-size:13px;color:var(--muted);">Update company info on your <a href="{% url 'employers_profile' %}">profile page</a>.</p>
+            </section>
+
+            <section id="preview" class="content-section">
+                <div class="section-header">
+                    <h2>Preview</h2>
+                    <p>How your job will appear to candidates.</p>
+                </div>
+                <div class="preview-card">
+                    <h3 id="previewTitle">Job Title</h3>
+                    <p id="previewCompany">{{ profile.company_name }}</p>
+                    <div class="preview-meta">
+                        <span id="previewLocation">Location</span> • <span id="previewType">Job Type</span>
+                    </div>
+                </div>
+            </section>
+
+            <section id="publish" class="content-section">
+                <div class="section-header">
+                    <h2>Publish</h2>
+                    <p>Review all details and publish your job.</p>
+                </div>
+                <div class="publish-card">
+                    <h3>Ready to publish?</h3>
+                    <p>Make sure title, location, and description are filled before publishing.</p>
+                    <button type="submit" class="btn btn-primary btn-large">Publish Job</button>
+                </div>
+            </section>
+        </form>
+
+        <section id="jobs-list" class="content-section{% if not show_create_wizard %} active{% endif %}">
+            <div class="section-header">
+                <h2>My Job Listings</h2>
+                <p>{{ jobs|length }} listing{{ jobs|length|pluralize }} for {{ profile.company_name }}</p>
+            </div>
+            <div class="section-actions" style="border-top:none;padding-top:0;margin-bottom:16px;justify-content:flex-start;">
+                <a href="{% url 'employers_jobs' %}?create=1" class="btn btn-primary">+ Post New Job</a>
+            </div>
+            <div id="jobsList" class="jobs-list">
+                {% for job in jobs %}
+                <div class="job-item">
+                    <div class="job-item-info">
+                        <h4>{{ job.title }}</h4>
+                        <p><strong>Location:</strong> {{ job.location }}</p>
+                        <p><strong>Type:</strong> {{ job.get_job_type_display }}</p>
+                        {% if job.salary_min or job.salary_max %}
+                        <p><strong>Salary:</strong>
+                            {% if job.salary_min %}${{ job.salary_min }}{% endif %}
+                            {% if job.salary_min and job.salary_max %} - {% endif %}
+                            {% if job.salary_max %}${{ job.salary_max }}{% endif %}
+                        </p>
+                        {% endif %}
+                        <p><strong>Status:</strong> {% if job.is_active %}<span class="status-badge status-active">Active</span>{% else %}<span class="status-badge status-inactive">Inactive</span>{% endif %}</p>
+                    </div>
+                    <div class="job-item-actions">
+                        <a href="{% url 'employers_job_applicants' job.id %}" class="btn-small btn-edit">Applicants</a>
+                        <a href="{% url 'employers_edit_job' job.id %}" class="btn-small btn-edit">Edit</a>
+                        <a href="{% url 'employers_delete_job' job.id %}" class="btn-small btn-delete">Delete</a>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="empty-state">No jobs posted yet. <a href="{% url 'employers_jobs' %}?create=1">Post your first job</a></p>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <aside class="right-panel">
+        <div class="progress-card">
+            <h3>Listing Progress</h3>
+            <div class="progress-steps">
+                <div class="progress-step {% if show_create_wizard %}active-step{% else %}inactive-step{% endif %}" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-name">Details</div>
+                </div>
+                <div class="progress-step inactive-step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-name">Requirements</div>
+                </div>
+                <div class="progress-step inactive-step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-name">Review &amp; Post</div>
+                </div>
+            </div>
+        </div>
+        <div class="progress-card">
+            <h3>Quick Links</h3>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Manage your employer account</p>
+            <a href="{% url 'employers_index' %}" class="btn btn-secondary" style="display:block;text-align:center;margin-bottom:8px;">Dashboard</a>
+            <a href="{% url 'employers_profile' %}" class="btn btn-secondary" style="display:block;text-align:center;">Company Profile</a>
+        </div>
+    </aside>
+</div>
+{% endblock %}
+
+{% block script %}
+<script defer src="{% static 'js/employersJobs.js' %}"></script>
+{% endblock %}

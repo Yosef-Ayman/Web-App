@@ -1,0 +1,12 @@
+.env
+db.sqlite3
+__pycache__/
+*.py[cod]
+media/
+.venv/
+venv/
+*.egg-info/
+.DS_Store
+.idea/
+.gitignore
+staticfiles/

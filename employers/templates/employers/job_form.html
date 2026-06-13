@@ -1,0 +1,143 @@
+{% extends 'employers/components/layout.html' %}
+{% load static %}
+{% block title %}Edit Job — {{ job.title }}{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'css/employers-jobs.css' %}">{% endblock %}
+
+{% block main %}
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>Edit Listing</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <button type="button" class="nav-btn active" data-section="details">Job Details</button>
+            <button type="button" class="nav-btn" data-section="requirements">Requirements</button>
+            <button type="button" class="nav-btn" data-section="preview">Preview</button>
+            <button type="button" class="nav-btn" data-section="publish">Save</button>
+        </nav>
+    </aside>
+
+    <div class="main-content">
+        <form id="jobForm" class="job-form" method="post" action="{% url 'employers_edit_job' job.id %}" data-server-submit="true">
+            {% csrf_token %}
+
+            <section id="details" class="content-section active">
+                <div class="section-header">
+                    <h2>Job Details</h2>
+                    <p>Update the basics for <strong>{{ job.title }}</strong>.</p>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="jobTitle">Job Title *</label>
+                        <input type="text" id="jobTitle" name="title" required value="{{ job.title }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Company</label>
+                        <input type="text" id="companyName" value="{{ profile.company_name }}" readonly>
+                    </div>
+                </div>
+                <div class="form-divider"></div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="location">Location *</label>
+                        <input type="text" id="location" name="location" required value="{{ job.location }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="jobType">Job Type *</label>
+                        <select id="jobType" name="job_type" required>
+                            <option value="full" {% if job.job_type == 'full' %}selected{% endif %}>Full-time</option>
+                            <option value="part" {% if job.job_type == 'part' %}selected{% endif %}>Part-time</option>
+                            <option value="contract" {% if job.job_type == 'contract' %}selected{% endif %}>Contract</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <input type="text" id="category" name="category" list="category-list" value="{{ job.category.name|default:'' }}">
+                        <datalist id="category-list">
+                            {% for cat in categories %}<option value="{{ cat.name }}">{% endfor %}
+                        </datalist>
+                    </div>
+                    <div class="form-group">
+                        <label for="salaryMin">Salary Min</label>
+                        <input type="number" id="salaryMin" name="salary_min" value="{{ job.salary_min|default:'' }}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="salaryMax">Salary Max</label>
+                        <input type="number" id="salaryMax" name="salary_max" value="{{ job.salary_max|default:'' }}">
+                    </div>
+                </div>
+                <div class="section-actions">
+                    <button type="button" id="nextStepBtn" class="btn btn-primary">Next: Requirements →</button>
+                </div>
+            </section>
+
+            <section id="requirements" class="content-section">
+                <div class="section-header">
+                    <h2>Requirements</h2>
+                    <p>Describe what you're looking for in an ideal candidate.</p>
+                </div>
+                <div class="form-group">
+                    <label for="description">Job Description *</label>
+                    <textarea id="description" name="description" rows="8" required>{{ job.description }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="skills">Required Skills</label>
+                    <textarea id="skills" name="skills" rows="6">{{ job.skills }}</textarea>
+                </div>
+                <div class="section-actions">
+                    <button type="button" id="nextStepBtn2" class="btn btn-primary">Next: Preview →</button>
+                </div>
+            </section>
+
+            <section id="preview" class="content-section">
+                <div class="section-header">
+                    <h2>Preview</h2>
+                    <p>How your job will appear to candidates.</p>
+                </div>
+                <div class="preview-card">
+                    <h3 id="previewTitle">{{ job.title }}</h3>
+                    <p id="previewCompany">{{ profile.company_name }}</p>
+                    <div class="preview-meta">
+                        <span id="previewLocation">{{ job.location }}</span> • <span id="previewType">{{ job.get_job_type_display }}</span>
+                    </div>
+                </div>
+            </section>
+
+            <section id="publish" class="content-section">
+                <div class="section-header">
+                    <h2>Save Changes</h2>
+                    <p>Review updates and save your listing.</p>
+                </div>
+                <div class="publish-card">
+                    <h3>Listing status</h3>
+                    <label class="checkbox-row">
+                        <input type="checkbox" name="is_active" {% if job.is_active %}checked{% endif %}>
+                        <span>Active listing (visible to candidates)</span>
+                    </label>
+                    <div class="section-actions" style="border-top:none;padding-top:16px;margin-top:16px;justify-content:flex-start;gap:12px;">
+                        <button type="submit" class="btn btn-primary btn-large">Save Changes</button>
+                        <a href="{% url 'employers_jobs' %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </div>
+            </section>
+        </form>
+    </div>
+
+    <aside class="right-panel">
+        <div class="progress-card">
+            <h3>Quick Links</h3>
+            <a href="{% url 'employers_job_applicants' job.id %}" class="btn btn-primary" style="display:block;text-align:center;margin-bottom:8px;">View Applicants</a>
+            <a href="{% url 'employers_delete_job' job.id %}" class="btn btn-danger" style="display:block;text-align:center;margin-bottom:8px;">Delete Job</a>
+            <a href="{% url 'employers_jobs' %}" class="btn btn-secondary" style="display:block;text-align:center;">Back to Jobs</a>
+        </div>
+    </aside>
+</div>
+{% endblock %}
+
+{% block script %}
+<script defer src="{% static 'js/employersJobs.js' %}"></script>
+{% endblock %}

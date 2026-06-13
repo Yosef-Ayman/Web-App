@@ -1,0 +1,14 @@
+{% extends 'components/layout.html' %}
+{% load static %}
+{% block title %}Forbidden | Jobify{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'css/errors.css' %}">{% endblock %}
+{% block main %}
+<section class="error-page">
+    <div class="error-card">
+        <span>403</span>
+        <h1>You do not have access here</h1>
+        <p>This area is restricted to the right account type or permission level.</p>
+        <a href="{% url 'index' %}">Back to dashboard</a>
+    </div>
+</section>
+{% endblock %}

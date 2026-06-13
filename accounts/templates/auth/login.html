@@ -1,0 +1,119 @@
+{% extends 'components/layout.html' %}
+{% load socialaccount %}
+{% load static %}
+
+{% block title %}Sign In | Jobify{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/onboarding.css' %}">
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block main %}
+<div class="onboarding-shell">
+    <div class="onboarding-split">
+
+        <div class="onboarding-left">
+            <div class="left-brand">Jobify<span>.</span></div>
+            <div class="left-content">
+                <h2>Welcome back to the talent network.</h2>
+                <p>Sign in to browse exclusive job posts, apply with one click, or manage your hiring pipeline.</p>
+            </div>
+        </div>
+
+        <div class="onboarding-right">
+            <div class="onboarding-card">
+
+                <div class="onboarding-header">
+                    <h1>Sign In</h1>
+                    <p>New to Jobify? <a href="{% url 'register' %}" class="auth-link">Create an account</a></p>
+                </div>
+
+                <div class="social-button-group">
+                    <a href="{% provider_login_url 'google' %}" class="social-btn">
+                        <svg width="18" height="18" viewBox="0 0 256 262" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid">
+                            <path d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027" fill="#4285F4"/>
+                            <path d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1" fill="#34A853"/>
+                            <path d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782" fill="#FBBC05"/>
+                            <path d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251" fill="#EB4335"/>
+                        </svg>
+                        Continue with Google
+                    </a>
+                    <a href="{% provider_login_url 'facebook' %}" class="social-btn">
+                        <svg width="18" height="18" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="16" cy="16" r="14" fill="url(#fb_login)"/>
+                            <path d="M21.2137 20.2816L21.8356 16.3301H17.9452V13.767C17.9452 12.6857 18.4877 11.6311 20.2302 11.6311H22V8.26699C22 8.26699 20.3945 8 18.8603 8C15.6548 8 13.5617 9.89294 13.5617 13.3184V16.3301H10V20.2816H13.5617V29.8345C14.2767 29.944 15.0082 30 15.7534 30C16.4986 30 17.2302 29.944 17.9452 29.8345V20.2816H21.2137Z" fill="white"/>
+                            <defs>
+                                <linearGradient id="fb_login" x1="16" y1="2" x2="16" y2="29.917" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#18ACFE"/><stop offset="1" stop-color="#0163E0"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        Continue with Facebook
+                    </a>
+                </div>
+
+                <div class="or-divider">or continue with email</div>
+
+                {% if messages %}
+                <div style="margin-bottom:1rem;">
+                    {% for message in messages %}
+                    <div class="username-feedback error" style="background:#fef2f2;border:1px solid #fecaca;padding:0.65rem 0.85rem;border-radius:8px;font-size:0.82rem;">
+                        <i class="fas fa-circle-exclamation"></i> {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form method="post" class="onboarding-form" novalidate>
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label class="form-label" for="id_username">
+                            Email Address
+                            <input type="email" name="username" id="id_username" class="form-input-text"
+                                   placeholder="you@example.com" required
+                                   value="{{ form.username.value|default:'' }}" autocomplete="email" oninput="validateEmail(this)">
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="id_password">
+                            Password
+                            <div class="password-input-wrapper">
+                                <input type="password" name="password" id="id_password" class="form-input-text"
+                                       placeholder="••••••••" required autocomplete="current-password" oninput="validatePassword(this)">
+                                <button type="button" class="password-toggle-btn" onclick="togglePass('id_password', this)" aria-label="Toggle password visibility">
+                                    <i class="fa-solid fa-eye-slash"></i>
+                                </button>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="auth-secondary-actions">
+                        <a href="{% url 'password_reset' %}">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-onboarding-continue">
+                        Sign In <i class="fas fa-right-to-bracket"></i>
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+function togglePass(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const isPass = input.type === 'password';
+    input.type = isPass ? 'text' : 'password';
+    const icon = btn.querySelector('i');
+    if (icon) icon.className = isPass ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+}
+</script>
+{% endblock %}

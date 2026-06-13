@@ -1,0 +1,79 @@
+{% extends 'employers/components/layout.html' %}
+{% load static %}
+{% block title %}Applicants — {{ job.title }}{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'css/employers-jobs.css' %}">{% endblock %}
+
+{% block main %}
+<div class="dashboard-container applicants-page">
+    <div class="main-content applicants-main">
+        <section class="content-section active">
+            <div class="section-header">
+                <h2>Applicants for {{ job.title }}</h2>
+                <p class="applicants-meta">
+                    {{ job.location }} · {{ job.get_job_type_display }} ·
+                    <a href="{% url 'employers_jobs' %}">← Back to my jobs</a>
+                </p>
+            </div>
+
+            <div class="applicants-stats">
+                <div class="stat-chip">
+                    <span class="stat-chip-value">{{ applications|length }}</span>
+                    <span class="stat-chip-label">Total Applicants</span>
+                </div>
+                <div class="stat-chip">
+                    <span class="stat-chip-value">{% if job.is_active %}Active{% else %}Inactive{% endif %}</span>
+                    <span class="stat-chip-label">Listing Status</span>
+                </div>
+            </div>
+
+            {% if applications %}
+            <div class="applicants-table-wrap">
+                <table class="applicants-table">
+                    <thead>
+                        <tr>
+                            <th>Candidate</th>
+                            <th>Email</th>
+                            <th>Applied</th>
+                            <th>Status</th>
+                            <th>Update</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in applications %}
+                        <tr>
+                            <td>
+                                <div class="applicant-name">{{ app.applicant.get_full_name|default:app.applicant.username }}</div>
+                            </td>
+                            <td>{{ app.applicant.email }}</td>
+                            <td>{{ app.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <span class="status-badge status-{{ app.status }}">{{ app.get_status_display }}</span>
+                            </td>
+                            <td>
+                                <form method="post" class="applicant-status-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="application_id" value="{{ app.id }}">
+                                    <select name="status" aria-label="Application status">
+                                        {% for value, label in status_choices %}
+                                        <option value="{{ value }}" {% if app.status == value %}selected{% endif %}>{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit" class="btn-small btn-edit">Update</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state-card">
+                <h3>No applications yet</h3>
+                <p>When candidates apply to this job, they will appear here.</p>
+                <a href="{% url 'employers_jobs' %}" class="btn btn-primary">Back to My Jobs</a>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}

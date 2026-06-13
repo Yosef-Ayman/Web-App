@@ -1,0 +1,273 @@
+{% extends 'components/layout.html' %}
+{% load static %}
+{% block title %}Jobify | Curated Opportunities for Tech Talent{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/user-home.css' %}">
+{% endblock %}
+
+{% block main %}
+
+{% if request.user.is_authenticated and not request.user.is_employer %}
+<section class="seeker-dashboard">
+    <div class="container">
+
+        <div class="dashboard-hero">
+            <div class="dashboard-hero-text">
+                <span class="section-label">Job Seeker Dashboard</span>
+                <h1>Welcome back, {{ request.user.first_name }}.</h1>
+                <p>Track your applications and discover new opportunities.</p>
+            </div>
+            <div class="dashboard-hero-actions">
+                <a href="{% url 'jobs' %}" class="btn-primary-link">Browse Jobs</a>
+                <a href="{% url 'profile' %}" class="btn-outline-link">Edit Profile</a>
+            </div>
+        </div>
+
+        <div class="seeker-stats">
+            <div class="stat-item">
+                <h3>{{ total_applications }}</h3>
+                <p>Applications sent</p>
+            </div>
+            <div class="stat-item">
+                <h3>{{ in_review_count }}</h3>
+                <p>In review</p>
+            </div>
+            <div class="stat-item">
+                <h3>{{ hired_count }}</h3>
+                <p>Offers received</p>
+            </div>
+        </div>
+
+        <div class="seeker-card">
+            <div class="card-heading">
+                <h2>Recent Applications</h2>
+                <a href="{% url 'profile' %}">View all</a>
+            </div>
+
+            {% if applications %}
+            <div class="applications-list">
+                {% for app in applications %}
+                <div class="application-row">
+                    <div class="app-company-logo">
+                        {% if app.job.employer.avatar_image %}
+                            <img src="{{ app.job.employer.avatar_image.url }}" alt="{{ app.job.employer.company_name }}">
+                        {% else %}
+                            <i class="fas fa-building"></i>
+                        {% endif %}
+                    </div>
+                    <div class="app-info">
+                        <span class="app-job-title">{{ app.job.title }}</span>
+                        <span class="app-company">{{ app.job.employer.company_name }} &middot; {{ app.job.location }}</span>
+                    </div>
+                    <span class="app-status status-{{ app.status }}">
+                        {% if app.status == 'hired' %}
+                            <i class="fas fa-circle-check"></i> Hired
+                        {% elif app.status == 'in_review' %}
+                            <i class="fas fa-clock"></i> In Review
+                        {% elif app.status == 'rejected' %}
+                            <i class="fas fa-circle-xmark"></i> Rejected
+                        {% else %}
+                            <i class="fas fa-paper-plane"></i> Applied
+                        {% endif %}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-paper-plane"></i>
+                <h3>No applications yet</h3>
+                <p>Start applying to jobs and track your progress here.</p>
+                <a href="{% url 'jobs' %}">Find Jobs</a>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+{% endif %}
+
+{% if not request.user.is_authenticated %}
+<section class="hero-section">
+    <div class="hero-glow"></div>
+    <div class="hero-container">
+        <h1>
+            The editorial job board for <br>
+            <span class="text-gradient">the next generation</span> of builders.
+        </h1>
+        <p class="hero-subtitle">
+            Skip the noise. Explore curated opportunities from fast-growing startups and established tech leaders globally.
+        </p>
+        <div class="hero-actions">
+            <a href="{% url 'jobs' %}" class="btn-primary">Find your next role <i class="fas fa-arrow-right"></i></a>
+            <a href="{% url 'register' %}?role=employer" class="btn-secondary">Post a job</a>
+        </div>
+    </div>
+</section>
+
+<section class="trusted-section">
+    <div class="container">
+        <p class="section-tagline">Trusted by builders at world-class companies</p>
+        <div class="logo-marquee-wrapper">
+            <div class="logo-marquee">
+                <div class="logo-item"><i class="fab fa-google"></i> Google</div>
+                <div class="logo-item"><i class="fab fa-microsoft"></i> Microsoft</div>
+                <div class="logo-item"><i class="fab fa-apple"></i> Apple</div>
+                <div class="logo-item"><i class="fab fa-amazon"></i> Amazon</div>
+                <div class="logo-item"><i class="fab fa-facebook"></i> Meta</div>
+                <div class="logo-item"><i class="fab fa-stripe"></i> Stripe</div>
+                <div class="logo-item"><i class="fab fa-figma"></i> Figma</div>
+                <div class="logo-item"><i class="fab fa-google"></i> Google</div>
+                <div class="logo-item"><i class="fab fa-microsoft"></i> Microsoft</div>
+                <div class="logo-item"><i class="fab fa-apple"></i> Apple</div>
+                <div class="logo-item"><i class="fab fa-amazon"></i> Amazon</div>
+                <div class="logo-item"><i class="fab fa-facebook"></i> Meta</div>
+                <div class="logo-item"><i class="fab fa-stripe"></i> Stripe</div>
+                <div class="logo-item"><i class="fab fa-figma"></i> Figma</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="jobs-section">
+    <div class="container">
+        <div class="section-header">
+            <div>
+                <span class="section-badge">Opportunities</span>
+                <h2>Featured Openings</h2>
+            </div>
+            <a href="{% url 'jobs' %}" class="btn-all-jobs">Browse all jobs <i class="fas fa-chevron-right"></i></a>
+        </div>
+
+        <div class="jobs-grid">
+            {% for job in jobs %}
+            <div class="job-card">
+                <div class="job-card-top">
+                    <div class="company-logo">
+                        {% if job.employer.avatar_image %}
+                        <img src="{{ job.employer.avatar_image.url }}" alt="{{ job.employer.company_name }}">
+                        {% else %}
+                        <div class="company-placeholder-logo">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="job-tags">
+                        <span class="tag-badge">{{ job.category }}</span>
+                        <span class="tag-badge">{{ job.location }}</span>
+                    </div>
+                </div>
+                <div class="job-card-middle">
+                    <h3>{{ job.title }}</h3>
+                    <p class="company-name">{{ job.employer.company_name }}</p>
+                </div>
+                <div class="job-card-bottom">
+                    <div class="job-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> {{ job.location }}</span>
+                        <span><i class="fas fa-dollar-sign"></i> {{ job.salary_min|floatformat:0 }} - {{ job.salary_max|floatformat:0 }} EGP</span>
+                    </div>
+                    {% if job.id %}
+                    <a href="{% url 'apply_job' job.id %}" class="btn-card-apply">View role</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <i class="fas fa-briefcase"></i>
+                <h3>No opportunities right now</h3>
+                <p>Check back shortly. New roles are listed throughout the week.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% if not request.user.is_authenticated %}
+<section class="employer-cta-section">
+    <div class="container">
+        <div class="employer-cta-card">
+            <div class="cta-glow"></div>
+            <div class="cta-content">
+                <h2>Looking for exceptional builders?</h2>
+                <p>Post your roles on Jobify to put them in front of highly qualified builders, developers, and tech managers.</p>
+                <div class="cta-actions">
+                    <a href="{% url 'register' %}?role=employer" class="btn-white">Hire via Jobify</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="testimonials-section">
+    <div class="container">
+        <div class="center-header">
+            <span class="section-badge">Success Stories</span>
+            <h2>Loved by builders and recruiters.</h2>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <p class="testimonial-quote">"Jobify was a gamechanger. I applied to 3 roles and got 2 interviews within a week. The design is so clean and onboarding is completely loop-free."</p>
+                <div class="testimonial-user">
+                    <div class="user-avatar"><i class="fas fa-user-circle"></i></div>
+                    <div>
+                        <div class="user-name">Sarah Jenkins</div>
+                        <div class="user-title">Senior Frontend Dev at Vercel</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <p class="testimonial-quote">"We filled our staff engineer position through Jobify in under 10 days. The quality of applicants was noticeably higher than other platforms."</p>
+                <div class="testimonial-user">
+                    <div class="user-avatar"><i class="fas fa-user-circle"></i></div>
+                    <div>
+                        <div class="user-name">Marcus Vance</div>
+                        <div class="user-title">VP of Talent at Stripe</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="faq-section">
+    <div class="container">
+        <div class="center-header">
+            <span class="section-badge">Questions</span>
+            <h2>Frequently Asked Questions</h2>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item">
+                <button class="faq-question">How does Jobify filter job openings? <i class="fas fa-chevron-down"></i></button>
+                <div class="faq-answer">
+                    <p>We review every role manually before posting. Only verified tech companies and recruiters with a response rate above 90% are listed.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">Is Jobify free for job seekers? <i class="fas fa-chevron-down"></i></button>
+                <div class="faq-answer">
+                    <p>Yes, finding jobs and applying is 100% free for seekers. We make money by charging employers to post positions and feature listings.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">How long does onboarding take? <i class="fas fa-chevron-down"></i></button>
+                <div class="faq-answer">
+                    <p>Under two minutes. Our setup wizard collects your role preference and resume so you can apply instantly.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const faqs = document.querySelectorAll('.faq-question');
+        faqs.forEach(faq => {
+            faq.addEventListener('click', function() {
+                const item = faq.parentNode;
+                item.classList.toggle('active');
+            });
+        });
+    });
+</script>
+{% endblock %}

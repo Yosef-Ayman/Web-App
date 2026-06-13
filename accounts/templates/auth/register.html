@@ -1,0 +1,244 @@
+{% extends 'components/layout.html' %}
+{% load socialaccount %}
+{% load static %}
+
+{% block title %}Sign Up | Jobify{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/onboarding.css' %}">
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block main %}
+<div class="onboarding-shell">
+    <div class="onboarding-split">
+
+        <div class="onboarding-left">
+            <div class="left-brand">Jobify<span>.</span></div>
+            <div class="left-content">
+                <h2>Join the global hub of professional growth.</h2>
+                <p>Create an account to search hundreds of premium tech, creative, and business opportunities.</p>
+            </div>
+        </div>
+
+        <div class="onboarding-right">
+            <div class="onboarding-card">
+
+                <div class="onboarding-header">
+                    <h1>Create Account</h1>
+                    <p>Already have an account? <a href="{% url 'login' %}" class="auth-link">Sign in</a></p>
+                </div>
+
+                <div class="social-button-group">
+                    <a href="{% provider_login_url 'google' %}" class="social-btn">
+                        <svg width="18" height="18" viewBox="0 0 256 262" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid">
+                            <path d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027" fill="#4285F4"/>
+                            <path d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1" fill="#34A853"/>
+                            <path d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782" fill="#FBBC05"/>
+                            <path d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251" fill="#EB4335"/>
+                        </svg>
+                        Sign up with Google
+                    </a>
+                    <a href="{% provider_login_url 'facebook' %}" class="social-btn">
+                        <svg width="18" height="18" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="16" cy="16" r="14" fill="url(#fb_register)"/>
+                            <path d="M21.2137 20.2816L21.8356 16.3301H17.9452V13.767C17.9452 12.6857 18.4877 11.6311 20.2302 11.6311H22V8.26699C22 8.26699 20.3945 8 18.8603 8C15.6548 8 13.5617 9.89294 13.5617 13.3184V16.3301H10V20.2816H13.5617V29.8345C14.2767 29.944 15.0082 30 15.7534 30C16.4986 30 17.2302 29.944 17.9452 29.8345V20.2816H21.2137Z" fill="white"/>
+                            <defs>
+                                <linearGradient id="fb_register" x1="16" y1="2" x2="16" y2="29.917" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#18ACFE"/><stop offset="1" stop-color="#0163E0"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        Sign up with Facebook
+                    </a>
+                </div>
+
+                <div class="or-divider">or continue with email</div>
+
+                {% if messages %}
+                <div style="margin-bottom:1rem;">
+                    {% for message in messages %}
+                    <div class="username-feedback error" style="background:#fef2f2;border:1px solid #fecaca;padding:0.65rem 0.85rem;border-radius:8px;font-size:0.82rem;">
+                        <i class="fas fa-circle-exclamation"></i> {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form method="post" action="{% url 'register' %}" class="onboarding-form" novalidate>
+                    {% csrf_token %}
+
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label class="form-label" for="first_name">
+                                First name
+                                <input type="text" placeholder="Yosef" required id="first_name" name="first_name"
+                                       class="form-input-text" autocomplete="given-name" oninput="validateName(this)" >
+                            </label>
+                            <span class="field-hint"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="last_name">
+                                Last name
+                                <input type="text" placeholder="Ayman" required id="last_name" name="last_name"
+                                       class="form-input-text" autocomplete="family-name" oninput="validateName(this)" >
+                            </label>
+                            <span class="field-hint"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="email">
+                            Email address
+                            <input type="email" placeholder="you@example.com" required id="email" name="email"
+                                   class="form-input-text" autocomplete="email" oninput="validateEmail(this)" >
+                        </label>
+                        <div class="field-hint"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password1">
+                            Password
+                            <div class="password-input-wrapper">
+                                <input type="password" placeholder="Min. 8 characters" autocomplete="new-password"
+                                       required minlength="8" id="password1" name="password1"
+                                       class="form-input-text" oninput="validatePassword(this)">
+                                <button type="button" class="password-toggle-btn" id="password-toggle1"
+                                        onclick="togglePass('password-toggle1')" aria-label="Toggle password">
+                                    <i class="fa-solid fa-eye-slash"></i>
+                                </button>
+                            </div>
+                        </label>
+                        <div class="strength-seg-container">
+                            <div class="strength-seg"></div>
+                            <div class="strength-seg"></div>
+                            <div class="strength-seg"></div>
+                            <div class="strength-seg"></div>
+                            <div class="strength-seg"></div>
+                        </div>
+                        <div class="password-rules">
+                            <div class="rule" data-rule="len">At least 8 characters</div>
+                            <div class="rule" data-rule="upper">One uppercase letter</div>
+                            <div class="rule" data-rule="lower">One lowercase letter</div>
+                            <div class="rule" data-rule="num">One number</div>
+                            <div class="rule" data-rule="sym">One special character</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password2">
+                            Confirm password
+                            <div class="password-input-wrapper">
+                                <input type="password" placeholder="Repeat your password" required
+                                       id="password2" name="password2" class="form-input-text"
+                                       autocomplete="new-password" oninput="validateConfirmPassword(this)">
+                                <button type="button" class="password-toggle-btn" id="password-toggle2"
+                                        onclick="togglePass('password-toggle2')" aria-label="Toggle password">
+                                    <i class="fa-solid fa-eye-slash"></i>
+                                </button>
+                            </div>
+                        </label>
+                        <span class="field-hint"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <span class="form-label">I want to use Jobify as a...</span>
+                        <div class="role-cards-container">
+
+                            <label class="role-card-option" id="label_employer_no">
+                                <input type="radio" id="is_employer0" name="is_employer" value="0" checked>
+                                <div class="role-card-icon"><i class="fas fa-user-tie"></i></div>
+                                <div class="role-card-title">Job Seeker</div>
+                                <div class="role-card-desc">Find jobs, track applications, build profile.</div>
+                            </label>
+
+                            <label class="role-card-option" id="label_employer_yes">
+                                <input type="radio" id="is_employer1" name="is_employer" value="1">
+                                <div class="role-card-icon"><i class="fas fa-building"></i></div>
+                                <div class="role-card-title">Employer</div>
+                                <div class="role-card-desc">Post opportunities, find talent, manage hiring.</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <span class="form-label">Gender</span>
+                        <div class="gender-pills-container">
+                            <label class="gender-pill-option" id="label_gender_m">
+                                <input type="radio" id="genderM" name="gender" value="M" checked>
+                                <i class="fas fa-mars"></i> Male
+                            </label>
+                            <label class="gender-pill-option" id="label_gender_f">
+                                <input type="radio" id="genderF" name="gender" value="F">
+                                <i class="fas fa-venus"></i> Female
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-onboarding-continue">
+                        Create Account <i class="fas fa-user-plus"></i>
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    By signing up you agree to our
+                    <a href="{% url 'terms' %}">Terms of Service</a> and
+                    <a href="{% url 'privacy' %}">Privacy Policy</a>.
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/validator.js' %}"></script>
+<script>
+function togglePass(btnId) {
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    const input = btn.closest('.password-input-wrapper')?.querySelector('input');
+    if (!input) return;
+    const isPass = input.type === 'password';
+    input.type = isPass ? 'text' : 'password';
+    const icon = btn.querySelector('i');
+    if (icon) icon.className = isPass ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    function radioGroup(pairs) {
+        pairs.forEach(([labelId, radioId]) => {
+            document.getElementById(labelId)?.addEventListener('click', function () {
+                pairs.forEach(([l]) => document.getElementById(l)?.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById(radioId).checked = true;
+            });
+        });
+    }
+    radioGroup([['label_employer_no','is_employer0'], ['label_employer_yes','is_employer1']]);
+    radioGroup([['label_gender_m','genderM'], ['label_gender_f','genderF']]);
+
+    const pills = document.querySelectorAll('.gender-pill-option');
+    pills.forEach(pill => {
+        const radio = pill.querySelector('input[type="radio"]');
+        pill.addEventListener('click', function () {
+            pills.forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            radio.checked = true;
+        });
+    });
+
+
+    const cards = document.querySelectorAll('.role-card-option');
+    cards.forEach(card => {
+        const radio = card.querySelector('input[type="radio"]');
+        card.addEventListener('click', function () {
+            cards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            radio.checked = true;
+        });
+    });
+});
+</script>
+{% endblock %}

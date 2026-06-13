@@ -1,0 +1,26 @@
+{% extends 'employers/components/layout.html' %}
+{% load static %}
+{% block title %}Delete Job — {{ job.title }}{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'css/employers-jobs.css' %}">{% endblock %}
+
+{% block main %}
+<div class="dashboard-container" style="grid-template-columns: 1fr; max-width: 720px; margin: 0 auto;">
+    <section class="content-section active" style="width:100%;">
+        <div class="section-header">
+            <h2>Delete Job Listing</h2>
+            <p>This action cannot be undone.</p>
+        </div>
+        <div class="publish-card delete-card">
+            <h3>{{ job.title }}</h3>
+            <p><strong>Location:</strong> {{ job.location }}</p>
+            <p><strong>Type:</strong> {{ job.get_job_type_display }}</p>
+            <p class="delete-warning">Are you sure you want to permanently delete this job and its applicant records?</p>
+            <form method="post" class="delete-actions">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-large">Yes, Delete Job</button>
+                <a href="{% url 'employers_jobs' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </section>
+</div>
+{% endblock %}

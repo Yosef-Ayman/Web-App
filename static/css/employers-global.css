@@ -1,0 +1,230 @@
+
+.employers-badge {
+    font-size: 0.55em;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background-image: linear-gradient(90deg, #6366f1, #c084fc);
+    color: #ffffff;
+    padding: 0.15em 0.55em;
+    border-radius: 0.4em;
+    vertical-align: middle;
+    margin-left: 0.35em;
+    position: relative;
+    top: -0.1em;
+}
+
+header {
+    background-color: #0F172A;
+    border-bottom: 1px solid #1e293b;
+}
+
+header a.nav-logo {
+    color: #ffffff;
+}
+
+header a.nav-logo:hover {
+    color: #93c5fd;
+}
+
+header ul a {
+    color: #94a3b8;
+}
+
+header ul a:hover {
+    color: #ffffff;
+    background-color: #1e293b;
+}
+
+header .account div > button {
+    border-color: #334155;
+    color: #94a3b8;
+    background-color: #1e293b;
+}
+
+header .account div > button:hover {
+    color: #ffffff;
+    border-color: #6366f1;
+}
+
+a.login {
+    color: #94a3b8;
+}
+
+a.login:hover {
+    color: #ffffff;
+    background-color: #1e293b;
+}
+
+a.register {
+    background-image: linear-gradient(90deg, #6366f1, #c084fc);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
+}
+
+a.register:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    transform: translateY(-1px);
+}
+
+ul.drop-box-user {
+    background-color: #0F172A;
+    border-color: #1e293b;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+ul.drop-box-user li a {
+    color: #94a3b8;
+    border-radius: 0.4rem;
+    padding: 0.35rem 0.5rem;
+    transition: 0.2s;
+    width: 100%;
+}
+
+ul.drop-box-user li a:hover {
+    color: #ffffff;
+    background-color: #1e293b;
+}
+
+ul.drop-box-user hr {
+    border-color: #1e293b;
+}
+
+button#logout {
+    color: #f87171 !important;
+    padding: 0.5rem 0.75rem !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.65rem !important;
+    background: none !important;
+    border: none !important;
+    font: inherit !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    text-align: left !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+button#logout:hover {
+    background-color: rgba(239, 68, 68, 0.15) !important;
+    color: #fca5a5 !important;
+}
+
+button#menu-toggle i {
+    color: #94a3b8;
+}
+
+button#menu-toggle:hover i {
+    color: #ffffff;
+}
+
+footer {
+    background-color: #0F172A;
+    border-top: 1px solid #1e293b;
+}
+
+footer h1,
+footer h2,
+footer h3,
+footer h4,
+footer h5,
+footer h6 {
+    color: #f1f5f9;
+}
+
+footer p {
+    color: #64748b;
+}
+
+footer ul a {
+    color: #64748b;
+    transition: color 0.2s;
+}
+
+footer ul a:hover {
+    color: #ffffff;
+}
+
+footer ul a::before {
+    background-color: #2563EB;
+}
+
+footer > .footer-container > .footer-container:nth-child(1) > a {
+    color: #f1f5f9;
+}
+
+footer > .footer-container > .footer-container:nth-child(1) > a:hover::before {
+    background-color: transparent;
+}
+
+footer > .footer-container > .footer-container:nth-last-child(1) > ul a {
+    border-color: #334155;
+    color: #64748b;
+}
+
+footer > .footer-container > .footer-container:nth-last-child(1) > ul li:nth-child(1) a:hover {
+    color: #1877F2;
+    border-color: #1877F2;
+    background-color: #1877f21a;
+}
+
+footer > .footer-container > .footer-container:nth-last-child(1) > ul li:nth-child(2) a:hover {
+    color: #f1f5f9;
+    border-color: #f1f5f9;
+    background-color: #f1f5f91a;
+}
+
+footer > .footer-container > .footer-container:nth-last-child(1) > ul li:nth-child(3) a:hover {
+    color: #0a66c2;
+    border-color: #0a66c2;
+    background-color: #0a66c21a;
+}
+
+footer > .footer-container > .footer-container:nth-last-child(1) > ul li:nth-child(4) a:hover {
+    color: #ff0033;
+    border-color: #ff0033;
+    background-color: #ff00331a;
+}
+
+footer > .footer-bar {
+    border-top: 1px solid #1e293b;
+    padding-top: 1.5rem;
+}
+
+footer > .footer-bar > p {
+    color: #475569;
+}
+
+footer > .footer-bar > p a {
+    color: #94a3b8;
+}
+
+footer > .footer-bar > p a::before {
+    background-color: #94a3b8;
+}
+
+@media (max-width: 768px) {
+    header ul {
+        background-color: #0F172A;
+    }
+
+    .account {
+        border-top: 1px solid #1e293b;
+        padding-top: 1rem;
+    }
+
+    a.btn-post-job {
+        width: 100%;
+        justify-content: center;
+    }
+
+    ul.drop-box-user {
+        background-color: #0F172A;
+        border-color: #1e293b;
+        position: absolute;
+        display: flex;
+        width: 100%;
+    }
+}

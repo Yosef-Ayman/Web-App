@@ -1,0 +1,225 @@
+{% extends 'components/layout.html' %}
+{% load static %}
+{% block title %}Profile | {{ user.first_name }} {{ user.last_name }}{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/user-profile.css' %}">
+{% endblock %}
+
+{% block main %}
+    <section class="profile-header">
+        <img id="display-avatar" class="profile-photo"
+             src="{% if user.profile_photo %}{{ user.profile_photo.url }}{% else %}https://img.magnific.com/free-vector/blue-circle-with-white-user_78370-4707.jpg{% endif %}"
+             alt="Profile Picture" />
+        <label for="avatar-upload" style="cursor:pointer">
+            <i class="fa-solid fa-camera"></i>
+            <input type="file" id="avatar-upload" hidden accept="image/*">
+        </label>
+        <div class="profile-info">
+            <h1 id="display-name">{{ user.first_name }} {{ user.last_name }}</h1>
+            <p class="profile-role" id="display-role">{{ user.job_title|default:"-" }}</p>
+            <ul class="profile-meta">
+                <li><i class="fa-solid fa-location-dot"></i> <span id="display-location">{{ user.location|default:"-" }}</span></li>
+                <li><i class="fa-solid fa-calendar"></i>Member since {{ user.created_at|date:"M Y" }}</li>
+            </ul>
+        </div>
+
+        <div class="profile-actions">
+            <button class="btn-secondary" id="editProfileBtn"><i class="fa-solid fa-pen-to-square"></i> Edit Profile</button>
+            <form method="post" enctype="multipart/form-data" action="{% url 'profile' %}">
+                {% csrf_token %}
+                <label class="btn-primary" for="cv-upload">
+                    <i class="fa-solid fa-upload"></i> <span id="cv-text">{% if user.cv_file %}Update CV{% else %}Upload CV{% endif %}</span>
+                    <input type="file" id="cv-upload" name="cv_upload" accept=".pdf,.doc,.docx" hidden />
+                </label>
+            </form>
+        </div>
+    </section>
+
+    <div class="content-grid">
+
+        <div class="profile-sidebar">
+
+            <section class="card">
+                <div class="card-header">
+                    <h2>Account Information</h2>
+                </div>
+
+                <table class="info-table">
+                    <tr>
+                        <td class="label">Username</td>
+                        <td>{{ user.username|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Full Name</td>
+                        <td id="display-fullname">{{ user.first_name }} {{ user.last_name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Email</td>
+                        <td id="display-email">{{ user.email }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Gender</td>
+                        <td>{% if user.gender == "M" %}Male{% elif user.gender == "F" %}Female{% else %}-{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Job Title</td>
+                        <td id="display-jobtitle">{{ user.job_title|default:"-" }}</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2>Activity Summary</h2>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <span class="stat-number">{{ summary.applied|default:0 }}</span>
+                        <span class="stat-label">Applied</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">{{ summary.in_review|default:0 }}</span>
+                        <span class="stat-label">In Review</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">{{ summary.hired|default:0 }}</span>
+                        <span class="stat-label">Hired</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">{{ summary.rejected|default:0 }}</span>
+                        <span class="stat-label">Rejected</span>
+                    </div>
+                </div>
+
+                <p class="last-updated">Last updated ({{ latest.updated_at|date:"Y-m-d H:i"|default:"-" }})</p>
+            </section>
+        </div>
+
+
+        <div class="jobs-panel">
+
+            <section class="card">
+                <div class="card-header">
+                    <h2>My Applied Jobs</h2>
+                    <span class="total-badge">{{ total|default:0 }} total</span>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="jobs-table">
+                        <thead>
+                            <tr>
+                                <th>Job Title</th>
+                                <th>Company</th>
+                                <th>Min Salary</th>
+                                <th>Max Salary</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for app in applications %}
+                            <tr>
+                                <td class="job-title">{{ app.job.title|default:"-" }}</td>
+                                <td>{{ app.job.employer.company_name|default:"-" }}</td>
+                                <td class="salary">{{ app.job.salary_min|default:"-" }} EGP</td>
+                                <td class="salary">{{ app.job.salary_max|default:"-" }} EGP</td>
+                                <td>
+                                    <span class="badge {{ app.status|lower }}">{{ app.get_status_display|default:"Applied" }}</span>
+                                </td>
+                                <td><a href="{% url 'apply_job' app.job.id %}" class="view-link">View</a></td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 20px; color: #666;">
+                                    You haven't applied for any jobs yet.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_sections %}
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Edit Profile</h2>
+                <button class="modal-close" id="modalClose">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group" style="text-align:center">
+                    <img id="modal-avatar-preview" src="{% if user.profile_photo %}{{ user.profile_photo.url }}{% else %}https://img.magnific.com/free-vector/blue-circle-with-white-user_78370-4707.jpg{% endif %}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:8px" />
+                    <label class="btn-secondary" for="modal-photo-upload" style="display:inline-block;cursor:pointer">
+                        Change Photo
+                        <input type="file" id="modal-photo-upload" hidden accept="image/*" />
+                    </label>
+                    <button type="button" id="remove-photo" class="btn-secondary" style="display:block;margin-top:8px;margin-left:auto;margin-right:auto;">Remove Photo</button>
+                </div>
+                <div class="form-group">
+                    <label for="inp-firstname">First Name</label>
+                    <input type="text" id="inp-firstname" value="{{ user.first_name }}" placeholder="First name" />
+                </div>
+                <div class="form-group">
+                    <label for="inp-lastname">Last Name</label>
+                    <input type="text" id="inp-lastname" value="{{ user.last_name }}" placeholder="Last name" />
+                </div>
+                <div class="form-group">
+                    <label for="inp-role">Job Title</label>
+                    <input type="text" id="inp-role" value="{{ user.job_title|default:'' }}" placeholder="e.g. Backend Developer" />
+                </div>
+                <div class="form-group">
+                    <label for="inp-location">Location</label>
+                    <input type="text" id="inp-location" value="{{ user.location|default:'' }}" placeholder="e.g. Cairo, Egypt" />
+                </div>
+                <div class="form-group">
+                    <label for="inp-username">Username</label>
+                    <input type="text" id="inp-username" value="{{ user.username|default:'' }}" placeholder="Username" />
+                </div>
+            </div>
+            <form method="post" action="{% url 'profile' %}" enctype="multipart/form-data" class="modal-footer" id="profileEditForm">
+                {% csrf_token %}
+                <input type="hidden" name="first_name" id="hidden-firstname">
+                <input type="hidden" name="last_name" id="hidden-lastname">
+                <input type="hidden" name="job_title" id="hidden-role">
+                <input type="hidden" name="location" id="hidden-location">
+                <input type="hidden" name="username" id="hidden-username">
+                <input type="file" name="profile_photo" id="hidden-photo" hidden>
+                <button type="button" class="btn-secondary" id="modalCancel">Cancel</button>
+                <button type="submit" class="btn-primary" id="modalSave">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Profile updated successfully!</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/user-profile.js' %}"></script>
+<script>
+document.getElementById('cv-upload')?.addEventListener('change', function() {
+    if(this.files.length > 0) {
+        document.getElementById('cv-text').textContent = "Uploading: " + this.files[0].name;
+        this.closest('form').submit();
+    }
+});
+document.getElementById('profileEditForm')?.addEventListener('submit', function() {
+    document.getElementById('hidden-firstname').value = document.getElementById('inp-firstname')?.value || '';
+    document.getElementById('hidden-lastname').value = document.getElementById('inp-lastname')?.value || '';
+    document.getElementById('hidden-role').value = document.getElementById('inp-role')?.value || '';
+    document.getElementById('hidden-location').value = document.getElementById('inp-location')?.value || '';
+    document.getElementById('hidden-username').value = document.getElementById('inp-username')?.value || '';
+    const photo = document.getElementById('modal-photo-upload')?.files?.[0];
+    if (photo) {
+        const dt = new DataTransfer();
+        dt.items.add(photo);
+        document.getElementById('hidden-photo').files = dt.files;
+    }
+});
+</script>
+{% endblock %}
